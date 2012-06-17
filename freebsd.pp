@@ -6,6 +6,7 @@
 # TODO: Configure environment variables
 # TODO: Configure SSHD KEYS
 # TODO: Configure sysctls
+# TODO: Configure ntpdate
 
 # CHANGE THIS VARIABLES TO MATCH YOU NEEDS
 
@@ -130,8 +131,8 @@ class jail {
 class bsd {
   include base
   include users
-  include services
   include packages
+  include services
 
   case $virtual { /jail/: { include jail } }
 }
