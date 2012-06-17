@@ -2,7 +2,6 @@
 # Francisco Cabrita : francisco.cabrita@gmail.com
 # 17/Jun/2012
 
-# TODO: Fix password issue
 # TODO: Fetch dotfiles
 # TODO: Configure environment variables
 # TODO: Configure SSHD KEYS
@@ -11,7 +10,7 @@
 # CHANGE THIS VARIABLES TO MATCH YOU NEEDS
 
 $username = "include"
-$password = "mudarpwd"
+$password = '$1$KnukxEEq$k/btq06o9z.mBTF1MNd8M0'
 $fullname = "Francisco Cabrita"
 $email = "francisco.cabrita@gmail.com"
 $mydomain = "jailaxy.com"
@@ -29,7 +28,7 @@ class users {
     comment => $fullname,
     shell   => "/usr/local/bin/bash",
     home => "/home/${username}",
-    password => "mudarpwd",
+    password => $password,
     managehome => true,
     groups => [ "wheel" ] }
 
@@ -49,7 +48,8 @@ class packages {
               "git",
               "portaudit",
               "portmaster",
-              "tmux" ]:
+              "tmux",
+              "augeas" ]:
               provider => freebsd,
               ensure => installed }
 }
@@ -122,11 +122,18 @@ class base {
 }
 
 
+class jail {
+  notify {"Info: HI CAN HAZ JAIL!": }
+}
+
+
 class bsd {
   include base
   include users
   include services
   include packages
+
+  case $virtual { /jail/: { include jail } }
 }
 
 
