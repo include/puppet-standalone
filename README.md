@@ -1,13 +1,14 @@
-puppet-standalone
-=================
+# Puppet Standalone Recipes
 
-## Install Steps
+## FreeBSD Recipe
 
-1. Dependencies:
+### Install Steps
+
+Dependencies
 
     pkg_add -r bash
-
-2. Installing and Configuring RVM
+  
+Installing and Configuring RVM
 
     curl -L https://get.rvm.io | bash -s stable
 
@@ -17,18 +18,16 @@ puppet-standalone
 
     rvm gemset use base18
 
-3. Installing Puppet
+Installing Puppet
 
     gem install puppet
 
-4. Configuring FreeBSD recipe
+Configuring FreeBSD recipe
 
-Edit `freebsd.pp` and change settings to match your needs:
-
-Don't forget to generate a new password to use in password field:
+Edit `freebsd.pp` and change settings to match your needs. Don't forget to generate a new password to use in password field.
 
     openssl passwd -1 changepass
 
-5. Finally, run it:
+Finally, run it:
 
-    puppet freebsd.pp -v -d
+    puppet freebsd.pp
