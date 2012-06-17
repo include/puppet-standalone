@@ -3,6 +3,10 @@
 # 17/Jun/2012
 
 # TODO: Fix password issue
+# TODO: Fetch dotfiles
+# TODO: Configure environment variables
+# TODO: Configure SSHD KEYS
+# TODO: Configure sysctls
 
 # CHANGE THIS VARIABLES TO MATCH YOU NEEDS
 
