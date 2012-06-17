@@ -2,7 +2,7 @@
 # Francisco Cabrita : francisco.cabrita@gmail.com
 # 17/Jun/2012
 
-# TODO: Fetch dotfiles
+# TODO: Link dotfiles
 # TODO: Configure environment variables
 # TODO: Configure SSHD KEYS
 # TODO: Configure sysctls
@@ -13,10 +13,12 @@
 $username = "include"
 $password = '$1$KnukxEEq$k/btq06o9z.mBTF1MNd8M0'
 $fullname = "Francisco Cabrita"
-$email = "francisco.cabrita@gmail.com"
+$email    = "francisco.cabrita@gmail.com"
 $mydomain = "jailaxy.com"
-$ip = "${ipaddress_em0}"
-$dns = "8.8.8.8"
+$ip       = "${ipaddress_em0}"
+$dns      = "8.8.8.8"
+
+$dotfiles_repo = "https://github.com/include/dotfiles.git"
 
 class users {
 
@@ -25,19 +27,15 @@ class users {
   realize Group["puppet"]
 
   @user { $username:
-    ensure => present,
-    comment => $fullname,
-    shell   => "/usr/local/bin/bash",
-    home => "/home/${username}",
-    password => $password,
+    ensure     => present,
+    comment    => $fullname,
+    shell      => "/usr/local/bin/bash",
+    home       => "/home/${username}",
+    password   => $password,
     managehome => true,
-    groups => [ "wheel" ] }
+    groups     => [ "wheel" ] }
 
   realize User[$username]
-
-#  exec { "fix_passwd":
-#    command     => "/bin/echo ${password} | /usr/sbin/pw usermod ${username} -h 0",
-#    refreshonly => true }
 
 }
 
@@ -97,29 +95,37 @@ class base {
     content => "nameserver ${dns}" }
 
   host { "localhost":
-    ensure => present,
+    ensure       => present,
     host_aliases => ["localhost"],
-    ip => "127.0.0.1",
-    target => "/etc/hosts"
+    ip           => "127.0.0.1",
+    target       => "/etc/hosts"
   }
   host { $hostname:
     ensure => present,
-    ip => $ip,
+    ip           => $ip,
     host_aliases => [$hostname],
-    target => "/etc/hosts"
+    target       => "/etc/hosts"
   }
   host { "services":
-    ensure => present,
+    ensure       => present,
     host_aliases => ["services.${mydomain}"],
-    ip => "192.168.10.20",
-    target => "/etc/hosts"
+    ip           => "192.168.10.20",
+    target       => "/etc/hosts"
   }
   host { "proxy":
-    ensure => present,
-    ip => "192.168.10.31",
+    ensure       => present,
+    ip           => "192.168.10.31",
     host_aliases => ["proxy.${mydomain}"],
-    target => "/etc/hosts"
+    target       => "/etc/hosts"
   }
+
+  exec { "gitclonedotfiles":
+    command => "git clone ${dotfiles_repo} /${id}/dotfiles",
+    cwd     => "/${id}/",
+    creates => "/${id}/dotfiles",
+    path    => [ "/usr/local/bin" ] 
+  }
+
 }
 
 
