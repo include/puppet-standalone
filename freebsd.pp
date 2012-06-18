@@ -1,8 +1,7 @@
 # FreeBSD Puppet standalone recipe
 # Francisco Cabrita : francisco.cabrita@gmail.com
-# 17/Jun/2012
+# 18/Jun/2012
 
-# TODO: Link dotfiles
 # TODO: Configure environment variables
 # TODO: Configure SSHD KEYS
 # TODO: Configure sysctls
@@ -33,10 +32,10 @@ class users {
     home       => "/home/${username}",
     password   => $password,
     managehome => true,
-    groups     => [ "wheel" ] }
+    groups     => [ "wheel" ]
+  }
 
   realize User[$username]
-
 }
 
 
@@ -50,7 +49,8 @@ class packages {
               "tmux",
               "augeas" ]:
               provider => freebsd,
-              ensure => installed }
+              ensure => installed
+  }
 }
 
 
@@ -60,8 +60,8 @@ class services {
 
   service { $services:
         ensure => running,
-        enable => true }
-
+        enable => true
+  }
 }
 
 
@@ -83,8 +83,8 @@ class puppetenv {
     ensure => "directory",
     owner  => "root",
     group  => "puppet",
-    mode   => 750 }
-
+    mode   => 750
+  }
 }
 
 
@@ -96,8 +96,8 @@ class base {
 
   host { "localhost":
     ensure       => present,
-    host_aliases => ["localhost"],
     ip           => "127.0.0.1",
+    host_aliases => ["localhost"],
     target       => "/etc/hosts"
   }
   host { $hostname:
@@ -108,8 +108,8 @@ class base {
   }
   host { "services":
     ensure       => present,
-    host_aliases => ["services.${mydomain}"],
     ip           => "192.168.10.20",
+    host_aliases => ["services.${mydomain}"],
     target       => "/etc/hosts"
   }
   host { "proxy":
@@ -123,9 +123,15 @@ class base {
     command => "git clone ${dotfiles_repo} /${id}/dotfiles",
     cwd     => "/${id}/",
     creates => "/${id}/dotfiles",
-    path    => [ "/usr/local/bin" ] 
+    path    => [ "/usr/local/bin" ],
+    require => Package[git]
   }
 
+  exec { "linkdotfiles":
+    command => "/${id}/dotfiles/makelinks.sh",
+    cwd     => "/${id}/dotfiles",
+    require => Exec["gitclonedotfiles"]
+  }
 }
 
 
