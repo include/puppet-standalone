@@ -56,6 +56,11 @@ class packages {
 
 class services {
 
+  exec { "bindssh":
+    command => "sed -i -e 's/#ListenAddress 0.0.0.0/ListenAddress ${ip}/' /etc/ssh/sshd_config",
+    path    => [ "/usr/bin" ]
+  }
+
   if $is_virtual == 'true' {
     $services = [ "sshd" ]
   }
