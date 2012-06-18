@@ -56,7 +56,12 @@ class packages {
 
 class services {
 
-  $services = [ "ntpdate", "sshd" ]
+  if $is_virtual == 'true' {
+    $services = [ "sshd" ]
+  }
+  else {
+    $services = [ "ntpdate", "sshd" ]
+  }
 
   service { $services:
         ensure => running,
@@ -129,7 +134,7 @@ class base {
 
   exec { "linkdotfiles":
     command => "/${id}/dotfiles/makelinks.sh",
-    cwd     => "/${id}/dotfiles",
+    #cwd     => "/${id}/dotfiles",
     require => Exec["gitclonedotfiles"]
   }
 }
@@ -147,6 +152,13 @@ class bsd {
   include services
 
   case $virtual { /jail/: { include jail } }
+
+  file {'motd':
+    ensure  => file,
+    path    => "/etc/motd",
+    mode    => 0644,
+    content => "Welcome to ${operatingsystem} ${operatingsystemrelease} \n\n"
+  }
 }
 
 
