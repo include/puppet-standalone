@@ -5,7 +5,6 @@
 # TODO: Configure environment variables
 # TODO: Configure SSHD KEYS
 # TODO: Configure sysctls
-# TODO: Configure ntpdate
 
 # CHANGE THIS VARIABLES TO MATCH YOU NEEDS
 
@@ -49,7 +48,7 @@ class packages {
               "tmux",
               "augeas" ]:
               provider => freebsd,
-              ensure => installed
+              ensure   => installed
   }
 }
 
@@ -150,20 +149,31 @@ class jail {
 }
 
 
+class bsd::conf::motd {
+
+  file { 'motd':
+    ensure  => file,
+    path    => "/etc/motd",
+    mode    => 0644,
+    content => "Welcome to ${operatingsystem} ${operatingsystemrelease} \n\n" }
+}
+
+
+class bsd::conf::localtime {
+
+  File["/etc/localtime"] { source => "file:///usr/share/zoneinfo/Europe/Lisbon" }
+}
+
+
 class bsd {
   include base
   include users
   include packages
   include services
+  include bsd::conf::motd
+  include bsd::conf::localtime
 
   case $virtual { /jail/: { include jail } }
-
-  file {'motd':
-    ensure  => file,
-    path    => "/etc/motd",
-    mode    => 0644,
-    content => "Welcome to ${operatingsystem} ${operatingsystemrelease} \n\n"
-  }
 }
 
 
