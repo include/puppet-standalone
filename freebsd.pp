@@ -161,7 +161,9 @@ class bsd::conf::motd {
 
 class bsd::conf::localtime {
 
-  File["/etc/localtime"] { source => "file:///usr/share/zoneinfo/Europe/Lisbon" }
+  file { "/etc/localtime":
+    ensure => link,
+    source => "file:///usr/share/zoneinfo/Europe/Lisbon" }
 }
 
 
